@@ -1,19 +1,16 @@
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Scanner;
-import java.io.File;
 import java.io.FileNotFoundException;
 
-public class FilePartReader {
+class FilePartReader {
 
     private String filePath;
     private Integer fromLine;
     private Integer toLine;
 
-    public FilePartReader() {
-        this.filePath = "/home/iwotyszkowski/codecool/java/testing-si-2017-1-iwoty/test_data.txt";
+    FilePartReader() {
+        this.filePath = "";
         this.fromLine = 0;
         this.toLine = 500;
     }
@@ -21,27 +18,36 @@ public class FilePartReader {
     public void setup(String filePath, Integer fromLine, Integer toLine) {
         if (toLine < fromLine) throw new IllegalArgumentException("toLine can not be smaller than fromLine");
         if (fromLine < 1) throw new IllegalArgumentException("fromLine can not be smaller than 1");
+        this.filePath = filePath;
+        this.fromLine = fromLine;
+        this.toLine = toLine;
     }
 
-    private String[] read() throws FileNotFoundException {
-        List<String> lines = new ArrayList<String>();
-        Scanner fileInput = new Scanner(new File(this.filePath));
+    private String read() throws FileNotFoundException {
+        StringBuilder readFile = new StringBuilder();
+        Scanner fileContent = new Scanner(new BufferedReader(new FileReader(filePath)));
 
-        while (fileInput.hasNextLine()) {
-            lines.add(fileInput.nextLine());
+        while (fileContent.hasNext()) {
+            readFile.append(fileContent);
+            readFile.append("\n");
         }
-        fileInput.close();
-
-        String[] content = lines.toArray(new String[0]);
-        return content;
+        return readFile.toString().trim();
     }
 
-    public String[] readLines() throws FileNotFoundException {
-        String[] content = read();
-        if (this.fromLine.equals(this.toLine)) {
-            return Arrays.copyOfRange(content, fromLine+1, toLine);
-        } else {
-            return Arrays.copyOfRange(content, fromLine+1, toLine+1);
+    public String readLines() throws FileNotFoundException {
+        StringBuilder contentInRange = new StringBuilder();
+
+        String fileContent = this.read();
+        String[] fileLines = fileContent.split("\\r?\\n");
+
+        if (this.toLine > fileLines.length) {
+            this.toLine = fileLines.length;
         }
+
+        for (int i = this.fromLine ; i <= this.toLine ; i++) {
+            contentInRange.append(fileLines[i-1]);
+            contentInRange.append("\n");
+        }
+        return contentInRange.toString().trim();
     }
 }

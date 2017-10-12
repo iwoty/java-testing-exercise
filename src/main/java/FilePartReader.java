@@ -9,7 +9,7 @@ class FilePartReader {
     private Integer fromLine;
     private Integer toLine;
 
-    FilePartReader() {
+    public FilePartReader() {
         this.filePath = "";
         this.fromLine = 0;
         this.toLine = 500;
